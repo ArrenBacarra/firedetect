@@ -1,0 +1,312 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fire Detection Upload</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #1a1a1a;
+            color: #fff;
+            padding: 0;
+            margin: 0;
+            overflow: hidden; /* Prevent scrolling due to fire animations */
+            position: relative;
+        }
+        h1 {
+            color: #ff5f00;
+            text-align: center;
+            margin-top: 50px;
+            font-size: 3rem;
+            text-shadow: 2px 2px 10px rgba(255, 95, 0, 0.6);
+            animation: fadeIn 2s ease-in;
+        }
+        @keyframes fadeIn {
+            0% { opacity: 0; }
+            100% { opacity: 1; }
+        }
+        .container {
+            max-width: 600px;
+            margin: 50px auto;
+            background-color: #333;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            animation: scaleIn 0.5s ease-out;
+        }
+        @keyframes scaleIn {
+            0% { transform: scale(0.95); opacity: 0; }
+            100% { transform: scale(1); opacity: 1; }
+        }
+        .dropzone {
+            border: 3px dashed #ff5f00;
+            border-radius: 8px;
+            background: #222;
+            padding: 40px;
+            text-align: center;
+            color: #aaa;
+            cursor: pointer;
+            margin-bottom: 20px;
+            transition: background-color 0.3s ease, border-color 0.3s ease;
+        }
+        .dropzone.dragover {
+            border-color: #ff4500;
+            background: #ff6f00;
+        }
+        .dropzone img {
+            max-width: 100%;
+            max-height: 150px;
+            margin-top: 10px;
+        }
+        button {
+            background-color: #ff5f00;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            font-size: 18px;
+            border-radius: 5px;
+            cursor: pointer;
+            display: block;
+            width: 100%;
+            margin-top: 20px;
+            transition: background-color 0.3s;
+        }
+        button:hover {
+            background-color: #ff4500;
+        }
+        h2 {
+            text-align: center;
+            color: #ff5f00;
+            font-size: 2rem;
+            text-shadow: 1px 1px 5px rgba(255, 95, 0, 0.7);
+        }
+        .error-message {
+            color: red;
+            text-align: center;
+            font-size: 18px;
+        }
+
+        /* Fire animation styles */
+        .fire {
+            position: absolute;
+            width: 60px;
+            height: 60px;
+            background: radial-gradient(circle, rgba(255, 94, 0, 1) 0%, rgba(255, 59, 0, 1) 100%);
+            border-radius: 50%;
+            animation: fireMovement 2s ease-in-out infinite, flicker 0.2s linear infinite;
+            box-shadow: 0 0 25px rgba(255, 95, 0, 0.6);
+        }
+
+        /* Keyframes for fire animation movement */
+        @keyframes fireMovement {
+            0% {
+                transform: translateY(0) scale(1);
+            }
+            50% {
+                transform: translateY(-20px) scale(1.2);
+            }
+            100% {
+                transform: translateY(0) scale(1);
+            }
+        }
+
+        /* Flickering effect */
+        @keyframes flicker {
+            0% { opacity: 1; }
+            25% { opacity: 0.8; }
+            50% { opacity: 0.9; }
+            75% { opacity: 0.7; }
+            100% { opacity: 1; }
+        }
+
+        /* Different positions for multiple fire elements */
+        .fire:nth-child(1) { top: 10%; left: 15%; animation-delay: 0s; }
+        .fire:nth-child(2) { top: 20%; left: 90%; animation-delay: 0.5s; }
+        .fire:nth-child(3) { top: 30%; left: 70%; animation-delay: 1s; }
+        .fire:nth-child(4) { top: 50%; left: 80%; animation-delay: 1.5s; }
+        .fire:nth-child(5) { top: 70%; left: 25%; animation-delay: 2s; }
+        .fire:nth-child(6) { top: 80%; left: 10%; animation-delay: 2.5s; }
+        
+
+        /* Modal Styles */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            justify-content: center;
+            align-items: center;
+            animation: fadeInModal 0.5s ease-out;
+        }
+
+        @keyframes fadeInModal {
+            0% { opacity: 0; }
+            100% { opacity: 1; }
+        }
+
+        .modal-content {
+            background-color: #222;
+            padding: 20px;
+            border-radius: 8px;
+            max-width: 500px;
+            width: 100%;
+            text-align: center;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+        }
+
+        .modal img {
+            max-width: 100%;
+            height: auto;
+            margin-top: 10px;
+            animation: zoomIn 0.5s ease-out;
+        }
+
+        @keyframes zoomIn {
+            0% { transform: scale(0.8); opacity: 0; }
+            100% { transform: scale(1); opacity: 1; }
+        }
+
+        .close {
+            color: #aaa;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+            position: absolute;
+            top: 10px;
+            right: 20px;
+        }
+
+        .close:hover,
+        .close:focus {
+            color: #ff5f00;
+            text-decoration: none;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <!-- Fire animations in the background -->
+    <div class="fire"></div>
+    <div class="fire"></div>
+    <div class="fire"></div>
+    <div class="fire"></div>
+    <div class="fire"></div>
+    <div class="fire"></div>
+
+    <div class="container">
+        <h1>Fire Detection System</h1>
+        <form id="upload-form" method="POST" enctype="multipart/form-data">
+            {% csrf_token %}
+            <div class="dropzone" id="dropzone">
+                Drag and drop an image here or click to select
+            </div>
+            <input type="file" name="image" id="file-input" accept="image/*" style="display: none;">
+            <button type="submit">Upload Image</button>
+        </form>
+
+        {% if fire_detected is not none %}
+            <!-- Button to trigger the modal -->
+            <button id="openModalBtn">View Prediction Result</button>
+        {% endif %}
+
+        {% if error %}
+            <div class="error-message">
+                <h3>Error: {{ error }}</h3>
+            </div>
+        {% endif %}
+    </div>
+
+    <!-- Modal -->
+    <div id="myModal" class="modal">
+        <div class="modal-content">
+            <span class="close" id="closeModal">&times;</span>
+            <h2>Prediction Result</h2>
+            <h3>
+                {% if fire_detected %}
+                    🔥 Fire Detected!
+                {% else %}
+                    ✅ No Fire Detected.
+                {% endif %}
+            </h3>
+            <h4>Uploaded Image:</h4>
+            <img src="{{ media_url }}" alt="Uploaded Image">
+        </div>
+    </div>
+
+    <script>
+        const dropzone = document.getElementById('dropzone');
+        const fileInput = document.getElementById('file-input');
+        const openModalBtn = document.getElementById('openModalBtn');
+        const modal = document.getElementById('myModal');
+        const closeModal = document.getElementById('closeModal');
+
+        // Handle drag-and-drop
+        dropzone.addEventListener('dragover', (event) => {
+            event.preventDefault();
+            dropzone.classList.add('dragover');
+        });
+
+        dropzone.addEventListener('dragleave', () => {
+            dropzone.classList.remove('dragover');
+        });
+
+        dropzone.addEventListener('drop', (event) => {
+            event.preventDefault();
+            dropzone.classList.remove('dragover');
+            const files = event.dataTransfer.files;
+            if (files.length > 0) {
+                fileInput.files = files;
+                updateDropzoneText(files[0]);
+            }
+        });
+
+        // Handle click to open file dialog
+        dropzone.addEventListener('click', () => {
+            fileInput.click();
+        });
+
+        fileInput.addEventListener('change', () => {
+            if (fileInput.files.length > 0) {
+                updateDropzoneText(fileInput.files[0]);
+            }
+        });
+
+        // Update dropzone with file name or image preview
+        function updateDropzoneText(file) {
+            dropzone.textContent = "";
+            const reader = new FileReader();
+
+            reader.onload = function (e) {
+                const img = new Image();
+                img.src = e.target.result;
+                img.style.maxWidth = '100%';
+                img.style.maxHeight = '150px';
+                dropzone.appendChild(img);
+            };
+            reader.readAsDataURL(file);
+        }
+
+        // Open the modal when button is clicked
+        openModalBtn.addEventListener('click', () => {
+            modal.style.display = "flex";
+        });
+
+        // Close the modal when the close button is clicked
+        closeModal.addEventListener('click', () => {
+            modal.style.display = "none";
+        });
+
+        // Close the modal when clicking outside of the modal content
+        window.addEventListener('click', (event) => {
+            if (event.target === modal) {
+                modal.style.display = "none";
+            }
+        });
+    </script>
+</body>
+</html>
